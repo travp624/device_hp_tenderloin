@@ -92,7 +92,10 @@ BOARD_USES_UBOOT_MULTIIMAGE := true
 # use dosfsck from dosfstools
 BOARD_USES_CUSTOM_FSCK_MSDOS := true
 
-# Define Prebuilt kernel locations
+# Define kernel config for inline building
+TARGET_KERNEL_SOURCE := kernel/hp/tenderloin
+TARGET_KERNEL_CONFIG := tenderloin_android_defconfig
+
 TARGET_PREBUILT_KERNEL := device/hp/tenderloin/prebuilt/boot/kernel
 
 TARGET_RECOVERY_INITRC := device/hp/tenderloin/recovery/init.rc
