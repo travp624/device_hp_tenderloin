@@ -337,24 +337,18 @@ void avg_filter(struct touchpoint *t) {
 
 #if HOVER_DEBOUNCE_FILTER
 void hover_debounce(int i) {
-	int prev_loc = tp[tpoint][i].prev_loc,
-		prev2_loc = tp[prevtpoint][prev_loc].prev_loc;
+	int prev_loc = tp[tpoint][i].prev_loc;
 
 	tp[tpoint][i].hover_delay = tp[prevtpoint][prev_loc].hover_delay;
 	// Check to see if the current touch, previous touch, and prev2 touch are
 	// all within the HOVER_DEBOUNCE_RADIUS
-	if (prev2_loc >= 0 &&
-		abs(tp[tpoint][i].x - tp[prevtpoint][prev_loc].x) <
+	if (abs(tp[tpoint][i].x - tp[prevtpoint][prev_loc].hover_x) <
 		HOVER_DEBOUNCE_RADIUS &&
-		abs(tp[tpoint][i].y - tp[prevtpoint][prev_loc].y) <
-		HOVER_DEBOUNCE_RADIUS &&
-		abs(tp[tpoint][i].x - tp[prev2tpoint][prev2_loc].x) <
-		HOVER_DEBOUNCE_RADIUS &&
-		abs(tp[tpoint][i].y - tp[prev2tpoint][prev2_loc].y) <
+		abs(tp[tpoint][i].y - tp[prevtpoint][prev_loc].hover_y) <
 		HOVER_DEBOUNCE_RADIUS) {
 		if (!tp[tpoint][i].hover_delay) {
-			tp[tpoint][i].x = tp[prevtpoint][prev_loc].x;
-			tp[tpoint][i].y = tp[prevtpoint][prev_loc].y;
+			tp[tpoint][i].x = tp[prevtpoint][prev_loc].hover_x;
+			tp[tpoint][i].y = tp[prevtpoint][prev_loc].hover_y;
 #if HOVER_DEBOUNCE_DEBUG
 			printf("Debouncing tracking ID: %i\n", tp[tpoint][i].tracking_id);
 #endif
@@ -366,6 +360,15 @@ void hover_debounce(int i) {
 			printf("Hover delay of %i on tracking ID: %i\n",
 				tp[tpoint][i].hover_delay, tp[tpoint][i].tracking_id);
 #endif
+		}
+		if (tp[prevtpoint][prev_loc].hover_delay == 1) {
+			// Do not bring forward the hover points... we will hover from
+			// here.  This prevents some jerking backwards as we switch between
+			// hovering and not hovering.
+		} else {
+			// Bring forward the hover points from previous location.
+			tp[tpoint][i].hover_x = tp[prevtpoint][prev_loc].hover_x;
+			tp[tpoint][i].hover_y = tp[prevtpoint][prev_loc].hover_y;
 		}
 	} else {
 		// We have moved too far for hover debouce, reset the delay counter.

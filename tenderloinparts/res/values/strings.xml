@@ -11,5 +11,4 @@
     <string name="touchscreen_mode_preference_title_stylus">Stylus</string>
     <string name="touchscreen_mode_preference_summary_finger">Touchscreen optimized for finger input</string>
     <string name="touchscreen_mode_preference_summary_stylus">Touchscreen optimized for stylus input</string>
-    <string name="touchscreen_set_binary">/system/bin/ts_srv_set</string>
 </resources>

@@ -38,24 +38,27 @@ import com.cyanogenmod.settings.device.R;
 public class TouchscreenFragmentActivity extends PreferenceFragment {
 
     private static final String TAG = "TenderloinParts_Touchscreen";
-    private SharedPreferences sharedPrefs;
+
+    private static final String TOUCHSCREEN_SET_BIN = "/system/bin/ts_srv_set";
+    private SharedPreferences mSharedPrefs;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (!isSupported( getString(R.string.touchscreen_set_binary) ))
+        if (!isSupported( TOUCHSCREEN_SET_BIN ))
             return;
 
         //Since touchscreen mode could be changed without this application we will
         //make sure there is no discrepancy between current mode of driver and shared preferences
-        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         syncPreferences();
 
         addPreferencesFromResource(R.xml.touchscreen_preferences);
+        setModePrefTitle(null);
 
-        Preference ts_mode_pref = findPreference("touchscreen_mode_preference");
-        ts_mode_pref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+        Preference tsModePref = findPreference("touchscreen_mode_preference");
+        tsModePref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 if (setTouchscreenMode((String)newValue)) {
@@ -66,27 +69,10 @@ public class TouchscreenFragmentActivity extends PreferenceFragment {
                 }
             }
         });
-
-        setModePrefTitle(null);
-    }
-
-    @Override
-    public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
-
-        String boxValue;
-        String key = preference.getKey();
-
-        Log.w(TAG, "key: " + key);
-
-        return true;
     }
 
     public static boolean isSupported(String FILE) {
         return Utils.fileExists(FILE);
-    }
-
-    public static void restore(Context context) {
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     private void setModePrefTitle(String mode) {
@@ -94,7 +80,7 @@ public class TouchscreenFragmentActivity extends PreferenceFragment {
 
         if (mode == null) {
             //Set title based on stored preference
-            mode = sharedPrefs.getString("touchscreen_mode_preference", "");
+            mode = mSharedPrefs.getString("touchscreen_mode_preference", "");
         }
 
         if (tsModePref != null) {
@@ -111,7 +97,7 @@ public class TouchscreenFragmentActivity extends PreferenceFragment {
     private void syncPreferences() {
         String currentMode = getCurrentTouchscreenMode();
         if (currentMode != null) {
-            SharedPreferences.Editor editor = sharedPrefs.edit();
+            SharedPreferences.Editor editor = mSharedPrefs.edit();
             String [] values = getResources().getStringArray(R.array.touchscreen_mode_values);
 
             if (currentMode.contains("Finger")) {
@@ -129,12 +115,14 @@ public class TouchscreenFragmentActivity extends PreferenceFragment {
         String ret = null;
         Process process;
         try {
-            process = Runtime.getRuntime().exec( getString(R.string.touchscreen_set_binary) + " G");
+            process = Runtime.getRuntime().exec( TOUCHSCREEN_SET_BIN + " M");
             DataInputStream is = new DataInputStream(process.getInputStream());
             process.waitFor();
 
             if (process.exitValue() == 0)
                 ret = is.readLine();
+            else
+                Log.e(TAG, "Unable to get touchscreen mode");
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -145,10 +133,9 @@ public class TouchscreenFragmentActivity extends PreferenceFragment {
 
     private boolean setTouchscreenMode(String mode) {
         int ret = -1;
-        Log.w(TAG, "new mode: " + mode);
         Process process;
         try {
-            process = Runtime.getRuntime().exec( getString(R.string.touchscreen_set_binary) + " " + mode);
+            process = Runtime.getRuntime().exec( TOUCHSCREEN_SET_BIN + " " + mode);
             process.waitFor();
 
             ret = process.exitValue();

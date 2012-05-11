@@ -62,6 +62,7 @@ PRODUCT_COPY_FILES += \
     frameworks/base/data/etc/android.hardware.sensor.gyroscope.xml:system/etc/permissions/android.hardware.sensor.gyroscope.xml \
     frameworks/base/data/etc/android.hardware.touchscreen.multitouch.distinct.xml:system/etc/permissions/android.hardware.touchscreen.multitouch.distinct.xml \
     frameworks/base/data/etc/android.hardware.usb.accessory.xml:system/etc/permissions/android.hardware.usb.accessory.xml \
+    frameworks/base/data/etc/android.hardware.usb.host.xml:system/etc/permissions/android.hardware.usb.host.xml \
     frameworks/base/data/etc/android.software.sip.voip.xml:system/etc/permissions/android.software.sip.voip.xml
 
 # QCOM Hal
@@ -85,8 +86,8 @@ PRODUCT_PACKAGES += \
 
 # QCOM OMX Video Encoding/Tests
 #PRODUCT_PACKAGES += \
-	mm-vdec-omx-test \
-	mm-video-driver-test
+#	mm-vdev-omx-test \
+#	mm-video-driver-test \
 #	libOmxVenc \
 #	mm-venc-omx-test720p \
 #	mm-video-encdrv-test
@@ -169,6 +170,8 @@ PRODUCT_TAGS += dalvik.gc.type-precise
 
 # device uses high-density artwork where available
 PRODUCT_LOCALES += en_US mdpi
+
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += ro.secure=0
 
 PRODUCT_COPY_FILES += \
     device/hp/tenderloin/media_profiles.xml:/system/etc/media_profiles.xml \
