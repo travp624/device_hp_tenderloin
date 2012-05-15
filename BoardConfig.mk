@@ -101,7 +101,7 @@ TARGET_KERNEL_CONFIG := tenderloin_android_defconfig
 
 TARGET_PREBUILT_KERNEL := device/hp/tenderloin/prebuilt/boot/kernel
 
-TARGET_RECOVERY_INITRC := device/hp/tenderloin/recovery/init.rc
+TARGET_RECOVERY_INITRC := device/hp/tenderloin/init.recovery.rc
 
 # tenderloin - these partition sizes are temporary to complete build
 TARGET_USERIMAGES_USE_EXT4 := true
