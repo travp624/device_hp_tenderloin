@@ -101,7 +101,7 @@ TARGET_KERNEL_CONFIG := tenderloin_android_defconfig
 
 TARGET_PREBUILT_KERNEL := device/hp/tenderloin/prebuilt/boot/kernel
 
-TARGET_RECOVERY_INITRC := device/hp/tenderloin/init.recovery.rc
+TARGET_RECOVERY_INITRC := device/hp/tenderloin/init.tenderloin.recovery.rc
 
 # tenderloin - these partition sizes are temporary to complete build
 TARGET_USERIMAGES_USE_EXT4 := true
@@ -123,3 +123,6 @@ BOARD_CUSTOM_BOOTIMG_MK := device/hp/tenderloin/uboot-bootimg.mk
 # Multiboot stuff
 TARGET_RECOVERY_PRE_COMMAND := "/system/bin/rebootcmd recovery"
 TARGET_ALTOS_PRE_COMMAND := "/system/bin/rebootcmd altos"
+
+# Recovery options
+BOARD_CUSTOM_RECOVERY_KEYMAPPING := ../../device/hp/tenderloin/recovery_keys.c

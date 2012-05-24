@@ -1,5 +1,4 @@
 on early-init
-
     start ueventd
 
 on init
@@ -38,11 +37,9 @@ on init
 
     # remove all the lvm stuff as well as the moboot nextboot instruction
     exec /sbin/rm -rf /dev/mmcblk0p14 /lib /var /mnt/moboot.next
-    umount /mnt
-
+    exec /sbin/umount /mnt
 
 on boot
-
     ifup lo
     hostname localhost
     domainname localdomain
@@ -57,8 +54,20 @@ service recovery /sbin/recovery
 service adbd /sbin/adbd recovery
     disabled
 
-on property:persist.service.adb.enable=1
-    start adbd
+# Always start adbd on userdebug and eng builds
+# In recovery, always run adbd as root.
+on property:ro.debuggable=1
+    write /sys/class/android_usb/android0/enable 0
+    write /sys/class/android_usb/android0/idVendor 0bb4
+    write /sys/class/android_usb/android0/idProduct 6860
+    write /sys/class/android_usb/android0/functions mass_storage,adb
+    write /sys/class/android_usb/android0/iManufacturer $ro.product.manufacturer
+    write /sys/class/android_usb/android0/iProduct $ro.product.model
+    write /sys/class/android_usb/android0/iSerial $ro.serialno
+    setprop service.adb.root 1
 
-on property:persist.service.adb.enable=0
-    stop adbd
+# Restart adbd so it can run as root
+on property:service.adb.root=1
+    write /sys/class/android_usb/android0/enable 0
+    restart adbd
+    write /sys/class/android_usb/android0/enable 1
