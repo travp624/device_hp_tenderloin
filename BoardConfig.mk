@@ -125,3 +125,6 @@ TARGET_RECOVERY_PRE_COMMAND := "/system/bin/rebootcmd"
 
 # Recovery options
 BOARD_CUSTOM_RECOVERY_KEYMAPPING := ../../device/hp/tenderloin/recovery_keys.c
+
+# Workaround to avoid issues with legacy liblights on QCOM platforms
+TARGET_PROVIDES_LIBLIGHTS := true
